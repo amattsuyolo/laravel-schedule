@@ -1,4 +1,5 @@
 <?
+
 namespace MattSu\ScheduleAssistant;
 
 class ScheduleAssistant
