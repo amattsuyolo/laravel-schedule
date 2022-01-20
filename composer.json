@@ -1,0 +1,19 @@
+{
+    "name": "matt_su/matt-schedule-assistant",
+    "description": "laravel schedule assistant",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "matt",
+            "email": "matt@leju.com.tw"
+        }
+    ],
+    "require": {
+        "php": ">=7.0"
+    },
+    "autoload": {
+        "psr-4": {
+          "MattSu\\ScheduleAssistant\\": "src/"
+        }
+    }
+}
