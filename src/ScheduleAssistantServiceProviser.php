@@ -28,6 +28,9 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
     {
         $configPath = __DIR__ . '/../config/schedule-assistant.php';
         $this->mergeConfigFrom($configPath, 'schedule-assistant');
-        $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        
+        if(config('schedule-assistant.open-schedule-route')){
+            $this->loadRoutesFrom(__DIR__ . '/routes.php');
+        }
     }
 }
