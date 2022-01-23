@@ -13,8 +13,14 @@
     },
     "autoload": {
         "psr-4": {
-          "MattSu\\ScheduleAssistant\\": "src/"
+            "MattSu\\ScheduleAssistant\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MattSu\\ScheduleAssistant\\ScheduleAssistantServiceProviser"
+            ]
         }
     }
-    
 }
