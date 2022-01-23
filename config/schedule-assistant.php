@@ -1,5 +1,5 @@
 <?php
 
 return [
-    "open-schedule-route" => env("open-schedule-route", false)
+    "open-schedule-route" => env("OPEN-SCHEDULE-ROUTE", false)
 ];
