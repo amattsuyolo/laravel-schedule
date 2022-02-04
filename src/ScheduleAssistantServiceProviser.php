@@ -3,6 +3,7 @@
 namespace MattSu\ScheduleAssistant;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Console\Scheduling\Event;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -29,8 +30,18 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
         $configPath = __DIR__ . '/../config/schedule-assistant.php';
         $this->mergeConfigFrom($configPath, 'schedule-assistant');
         
-        if(config('schedule-assistant.open-schedule-route')){
+        if (config('schedule-assistant.open-schedule-route')){
             $this->loadRoutesFrom(__DIR__ . '/routes.php');
         }
+        Event::macro('notTrack', function () {
+            $this->notTrack = true;
+
+            return $this;
+        });
+        Event::macro('upperLimitsOfNormalMinutes', function ($minutes) {
+            $this->upperLimitsOfNormalMinutes = $minutes;
+
+            return $this;
+        });
     }
 }
