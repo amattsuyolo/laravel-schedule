@@ -15,6 +15,7 @@ class CreateScheduledAssistantTable extends Migration
     {
         Schema::create('scheduled_assistant', function (Blueprint $table) {
             $table->increments('id');
+            $table->string('type');
             $table->string('command');
             $table->string('mutex_cache_key')->nullable();
             $table->text('output')->nullable();
