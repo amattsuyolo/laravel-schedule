@@ -11,6 +11,7 @@ use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Support\Facades\Event;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleFinishedStatus;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleStartingStatus;
+use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -60,5 +61,6 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
             ScheduledTaskFinished::class,
             [RecordScheduleFinishedStatus::class, 'handle']
         );
+        $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
     }
 }
