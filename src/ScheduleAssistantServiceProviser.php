@@ -3,7 +3,13 @@
 namespace MattSu\ScheduleAssistant;
 
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Console\Scheduling\Event;
+use Illuminate\Console\Scheduling\Event as ScheduleEvent;
+use Illuminate\Console\Events\ScheduledTaskFailed;
+use Illuminate\Console\Events\ScheduledTaskFinished;
+use Illuminate\Console\Events\ScheduledTaskSkipped;
+use Illuminate\Console\Events\ScheduledTaskStarting;
+use Illuminate\Support\Facades\Event;
+use MattSu\ScheduleAssistant\Listeners\RecordScheduleFinishedStatus;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -14,7 +20,7 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
      */
     public function register()
     {
-        $source = realpath($raw = __DIR__.'/../config/schedule-assistant.php') ?: $raw;
+        $source = realpath($raw = __DIR__ . '/../config/schedule-assistant.php') ?: $raw;
         $this->publishes([
             $source => config_path('schedule-assistant.php'),
         ]);
@@ -29,19 +35,24 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
     {
         $configPath = __DIR__ . '/../config/schedule-assistant.php';
         $this->mergeConfigFrom($configPath, 'schedule-assistant');
-        
-        if (config('schedule-assistant.open-schedule-route')){
+
+        if (config('schedule-assistant.open-schedule-route')) {
             $this->loadRoutesFrom(__DIR__ . '/routes.php');
         }
-        Event::macro('notTrack', function () {
+        ScheduleEvent::macro('notTrack', function () {
             $this->notTrack = true;
 
             return $this;
         });
-        Event::macro('upperLimitsOfNormalMinutes', function ($minutes) {
+        ScheduleEvent::macro('upperLimitsOfNormalMinutes', function ($minutes) {
             $this->upperLimitsOfNormalMinutes = $minutes;
 
             return $this;
         });
+
+        Event::listen(
+            ScheduledTaskFinished::class,
+            [RecordScheduleFinishedStatus::class, 'handle']
+        );
     }
 }
