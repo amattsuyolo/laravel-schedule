@@ -39,8 +39,8 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
         if (config('schedule-assistant.open-schedule-route')) {
             $this->loadRoutesFrom(__DIR__ . '/routes.php');
         }
-        ScheduleEvent::macro('notTrack', function () {
-            $this->notTrack = true;
+        ScheduleEvent::macro('notTrack', function ($track = true) {
+            $this->notTrack = $track;
 
             return $this;
         });
