@@ -44,7 +44,7 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
 
             return $this;
         });
-        ScheduleEvent::macro('upperLimitsOfNormalMinutes', function ($minutes) {
+        ScheduleEvent::macro('upperLimitsOfNormalMinutes', function ($minutes = 10) {
             $this->upperLimitsOfNormalMinutes = $minutes;
 
             return $this;

@@ -37,7 +37,9 @@ class RecordScheduleFinishedStatus
         logger("我是finished listener expression:");
         logger($event->task->expression);
         logger("我是finished listener notTrack:");
-        logger($event->task->notTrack);
+        logger($event->task->notTrack());
+        logger("我是finished listener upperLimitsOfNormalMinutes:");
+        logger($event->task->upperLimitsOfNormalMinutes());
         //Schedule 下 Withoutoverlapping 如果有排程死掉，
         //但是排程手動下能正常執行時，
         //到資料表scheduled_events找出key然後可以利用 php artisan tinker 直接下Cache::forget($mutex_cache_key);
