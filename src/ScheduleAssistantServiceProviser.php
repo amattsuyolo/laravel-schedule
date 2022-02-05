@@ -34,6 +34,8 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
      */
     public function boot()
     {
+        $this->loadMigrationsFrom(__DIR__ . '/migrations');
+
         $configPath = __DIR__ . '/../config/schedule-assistant.php';
         $this->mergeConfigFrom($configPath, 'schedule-assistant');
 
