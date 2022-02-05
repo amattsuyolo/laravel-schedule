@@ -52,11 +52,11 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
         });
         Event::listen(
             ScheduledTaskStarting::class,
-            [RecordScheduleStartingStatus::class]
+            [RecordScheduleStartingStatus::class, 'handle']
         );
         Event::listen(
             ScheduledTaskFinished::class,
-            [RecordScheduleFinishedStatus::class]
+            [RecordScheduleFinishedStatus::class, 'handle']
         );
     }
 }
