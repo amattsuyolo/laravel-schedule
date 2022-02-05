@@ -10,6 +10,7 @@ use Illuminate\Console\Events\ScheduledTaskSkipped;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use Illuminate\Support\Facades\Event;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleFinishedStatus;
+use MattSu\ScheduleAssistant\Listeners\RecordScheduleStartingStatus;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -49,10 +50,13 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
 
             return $this;
         });
-
+        Event::listen(
+            ScheduledTaskStarting::class,
+            [RecordScheduleStartingStatus::class]
+        );
         Event::listen(
             ScheduledTaskFinished::class,
-            [RecordScheduleFinishedStatus::class, 'handle']
+            [RecordScheduleFinishedStatus::class]
         );
     }
 }
