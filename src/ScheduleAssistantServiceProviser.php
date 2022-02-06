@@ -13,6 +13,7 @@ use MattSu\ScheduleAssistant\Listeners\RecordScheduleFinishedStatus;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleStartingStatus;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleFailedStatus;
 use MattSu\ScheduleAssistant\models\ScheduledAssistant;
+use MattSu\ScheduleAssistant\Commands\ClearScheduleMutex;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -68,5 +69,11 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
         );
 
         $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
+
+        if ($this->app->runningInConsole()) {
+            $this->commands([
+                ClearScheduleMutex::class,
+            ]);
+        }
     }
 }
