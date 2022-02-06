@@ -44,10 +44,12 @@ class RecordScheduleStartingStatus
         //到資料表scheduled_events找出key然後可以利用 php artisan tinker 直接下Cache::forget($mutex_cache_key);
         // $mutex_cache_key = 'framework' . DIRECTORY_SEPARATOR . 'schedule-' . sha1($event->expression . $event->command);
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
+        $mutexName = $event->task->mutexName();
         $scheduledAssistant = ScheduledAssistant::create([
             'type' => 'starting',
             'command' => $command,
-            'logged_at' => date("Y-m-d H:i:s")
+            'logged_at' => date("Y-m-d H:i:s"),
+            'mutex_cache_key' => $mutexName
         ]);
     }
 }
