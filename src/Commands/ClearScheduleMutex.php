@@ -13,7 +13,7 @@ class ClearScheduleMutex extends Command
      *
      * @var string
      */
-    protected $signature = 'command:clearScheduleMutex {command}';
+    protected $signature = 'command:clearScheduleMutex {commandName}';
 
     /**
      * The console command description.
@@ -39,7 +39,7 @@ class ClearScheduleMutex extends Command
      */
     public function handle()
     {
-        $command = $this->argument('command');
+        $command = $this->argument('commandName');
         $scheduledAssistantorderBy = ScheduledAssistant::where("command", $command)
             ->orderBy('id', 'desc')
             ->first();
