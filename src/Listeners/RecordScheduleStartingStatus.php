@@ -49,7 +49,8 @@ class RecordScheduleStartingStatus
             'type' => 'starting',
             'command' => $command,
             'logged_at' => date("Y-m-d H:i:s"),
-            'mutex_cache_key' => $mutexName
+            'mutex_cache_key' => $mutexName,
+            'output' => $event->task->output
         ]);
     }
 }

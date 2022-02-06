@@ -49,7 +49,8 @@ class RecordScheduleFinishedStatus
         $scheduledAssistant = ScheduledAssistant::create([
             'type' => 'finish',
             'command' => $command,
-            'logged_at' => date("Y-m-d H:i:s")
+            'logged_at' => date("Y-m-d H:i:s"),
+            'output' => $event->task->output
         ]);
     }
 }

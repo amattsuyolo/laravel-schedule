@@ -47,9 +47,10 @@ class RecordScheduleFailedStatus
         // $mutex_cache_key = 'framework' . DIRECTORY_SEPARATOR . 'schedule-' . sha1($event->expression . $event->command);
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
         $scheduledAssistant = ScheduledAssistant::create([
-            'type' => 'starting',
+            'type' => 'failed',
             'command' => $command,
-            'logged_at' => date("Y-m-d H:i:s")
+            'logged_at' => date("Y-m-d H:i:s"),
+            'output' => $event->task->output
         ]);
     }
 }
