@@ -39,11 +39,22 @@ class ClearScheduleMutex extends Command
      */
     public function handle()
     {
+        //補錯誤處理
         $command = $this->argument('commandName');
-        $scheduledAssistantorderBy = ScheduledAssistant::where("command", $command)
-            ->orderBy('id', 'desc')
-            ->first();
-        Cache::forget($scheduledAssistantorderBy->mutex_cache_key);
-        $this->info("clear");
+        try {
+            $scheduledAssistant = ScheduledAssistant::where("command", $command)
+                ->orderBy('id', 'desc')
+                ->first();
+            if (empty($scheduledAssistant)) {
+                $this->info("Command name not found!");
+                return;
+            }
+            Cache::forget($scheduledAssistant->mutex_cache_key);
+        } catch (\Exception $e) {
+            echo $e->getMessage();
+        }
+
+        $this->info("Clear the mutex cache ");
+        $this->info("Command Name : " . $command);
     }
 }

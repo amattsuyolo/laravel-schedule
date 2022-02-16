@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
+use MattSu\ScheduleAssistant\Controllers;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/schedule-assistant', function () {
-    return "hello";
-});
+// Route::get('/schedule-assistant-dashboard', function () {
+//     return "hello";
+// });
+Route::get('/schedule-assistant-dashboard', [ScheduleAssistantController::class, 'dashBoard']);
