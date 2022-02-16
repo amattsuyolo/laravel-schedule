@@ -29,7 +29,6 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
             $source => config_path('schedule-assistant.php'),
         ]);
 
-        $this->app->make('MattSu\ScheduleAssistant\Controllers\ScheduleAssistantController');
         $this->loadViewsFrom(__DIR__ . '/views', 'mattsu');
     }
 

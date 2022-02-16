@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use MattSu\ScheduleAssistant\Controllers;
+use MattSu\ScheduleAssistant\Controllers\ScheduleAssistantController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
