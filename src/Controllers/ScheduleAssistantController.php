@@ -11,7 +11,6 @@ class ScheduleAssistantController extends Controller
     public function dashBoard()
     {
         $ScheduledAssistant = ScheduledAssistant::all();
-        var_dump($ScheduledAssistant);
-        return view('mattsu::scheduleDashboard');
+        return view('mattsu::scheduleDashboard', ['data' => $ScheduledAssistant]);
     }
 }
