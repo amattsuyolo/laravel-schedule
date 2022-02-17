@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=7.3",
-        "laravel/framework": "^8.*"
+        "laravel/framework": "8.*"
     },
     "autoload": {
         "psr-4": {
