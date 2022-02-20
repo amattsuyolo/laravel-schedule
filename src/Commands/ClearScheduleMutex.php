@@ -3,8 +3,10 @@
 namespace MattSu\ScheduleAssistant\Commands;
 
 use Illuminate\Console\Command;
-use Cache;
 use MattSu\ScheduleAssistant\models\ScheduledAssistant;
+use \Cron\CronExpression;
+use \Carbon\Carbon;
+use Cache;
 
 class ClearScheduleMutex extends Command
 {
@@ -46,15 +48,47 @@ class ClearScheduleMutex extends Command
                 ->orderBy('id', 'desc')
                 ->first();
             if (empty($scheduledAssistant)) {
-                $this->info("Command name not found!");
-                return;
+                //處理資料表沒有記怎麼取出mutex
+                $mutex_cache_key = $this->getMutex($command);
+                if (empty($mutex_cache_key)) {
+                    $this->info("Command name not found!");
+                    return;
+                }
+            } else {
+                $mutex_cache_key = $scheduledAssistant->mutex_cache_key;
             }
-            Cache::forget($scheduledAssistant->mutex_cache_key);
+            Cache::forget($mutex_cache_key);
         } catch (\Exception $e) {
             echo $e->getMessage();
         }
 
         $this->info("Clear the mutex cache ");
         $this->info("Command Name : " . $command);
+    }
+    /**
+     * 
+     */
+    public function getMutex($command)
+    {
+        //沒有這段會壞掉
+        app()->make(\Illuminate\Contracts\Console\Kernel::class);
+        $schedule = app()->make(\Illuminate\Console\Scheduling\Schedule::class);
+
+        $events = collect($schedule->events())->map(function ($event) {
+            $cron = CronExpression::factory($event->expression);
+            $date = Carbon::now();
+            if ($event->timezone) {
+                $date->setTimezone($event->timezone);
+            }
+            $command = trim(substr($event->command, strpos($event->command, 'artisan') + strlen('artisan') + 1));
+            return [
+                'expression' => $event->expression,
+                'command' => $command,
+                'next_run_at' => $cron->getNextRunDate()->format('Y-m-d H:i:s'),
+                'mutex_name' => $event->mutexName()
+            ];
+        });
+        $events = $events->groupBy('command')->toArray();
+        return optional($events["command:logTime"])[0][$command];
     }
 }
