@@ -89,6 +89,6 @@ class ClearScheduleMutex extends Command
             ];
         });
         $events = $events->groupBy('command')->toArray();
-        return optional($events["command:logTime"])[0][$command];
+        return optional($events[$command])[0]['mutex_name'];
     }
 }
