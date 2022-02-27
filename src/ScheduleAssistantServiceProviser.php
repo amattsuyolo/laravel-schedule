@@ -72,7 +72,7 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
 
         $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
 
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole() and config('schedule-assistant.open-clear-schedule-mutex-command')) {
             $this->commands([
                 ClearScheduleMutex::class,
             ]);

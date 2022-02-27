@@ -7,5 +7,12 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    "open-schedule-route" => env("OPEN_SCHEDULE_ROUTE", false)
+    "open-schedule-route" => true,
+    /*
+    |--------------------------------------------------------------------------
+    | Open command of clearing schedule mutex
+    |--------------------------------------------------------------------------
+    |
+    */
+    "open-clear-schedule-mutex-command" => true,
 ];
