@@ -12,6 +12,13 @@ The preferred method of installation is to use composer:
 ```bash
 $ composer require mattsu/scheduleassistant
 ```
+
+Publish the migration and config
+
+```bash 
+php artisan vendor:publish --provider=MattSu\\ScheduleAssistant\\ScheduleAssistantServiceProviser
+```
+
 Create scheduled_assistant table
 
 ```bash
