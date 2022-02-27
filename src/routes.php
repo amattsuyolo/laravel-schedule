@@ -13,7 +13,8 @@ use MattSu\ScheduleAssistant\Controllers\ScheduleAssistantController;
 |
 */
 
-// Route::get('/schedule-assistant-dashboard', function () {
-//     return "hello";
-// });
-Route::get('/schedule-assistant-dashboard', [ScheduleAssistantController::class, 'dashBoard']);
+
+Route::get('/schedule-assistant-dashboard/{command}', [ScheduleAssistantController::class, 'dashBoardDetail']);
+
+
+Route::get('/schedule-assistant-dashboard', [ScheduleAssistantController::class, 'dashBoardIndex']);
