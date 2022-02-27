@@ -8,6 +8,10 @@ use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 
 class ScheduleAssistantController extends Controller
 {
+    /**
+     * 應該不能所有人都可以看
+     * 用laravel 的auth?
+     */
     public function dashBoard()
     {
         $ScheduledAssistant = ScheduledAssistant::all();

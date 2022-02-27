@@ -41,21 +41,16 @@ class ClearScheduleMutex extends Command
      */
     public function handle()
     {
-        //補錯誤處理
-        $command = $this->argument('commandName');
+        $command = trim($this->argument('commandName'));
         try {
             $scheduledAssistant = ScheduledAssistant::where("command", $command)
                 ->orderBy('id', 'desc')
                 ->first();
-            if (empty($scheduledAssistant)) {
-                //處理資料表沒有記怎麼取出mutex
-                $mutex_cache_key = $this->getMutex($command);
-                if (empty($mutex_cache_key)) {
-                    $this->info("Command name not found!");
-                    return;
-                }
-            } else {
-                $mutex_cache_key = $scheduledAssistant->mutex_cache_key;
+            $mutex_cache_key = $scheduledAssistant->mutex_cache_key ?? "";
+            $mutex_cache_key = (empty($mutex_cache_key)) ? $this->getMutex($command) : $mutex_cache_key;
+            if (empty($mutex_cache_key)) {
+                $this->info("Command name not found!");
+                return;
             }
             Cache::forget($mutex_cache_key);
         } catch (\Exception $e) {
@@ -70,8 +65,9 @@ class ClearScheduleMutex extends Command
      */
     public function getMutex($command)
     {
-        //沒有這段會壞掉
+        //It will broke without below
         app()->make(\Illuminate\Contracts\Console\Kernel::class);
+
         $schedule = app()->make(\Illuminate\Console\Scheduling\Schedule::class);
 
         $events = collect($schedule->events())->map(function ($event) {
