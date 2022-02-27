@@ -1,4 +1,12 @@
 <table>
+    <tr>
+        <th>id</th>
+        <th>type</th>
+        <th>command</th>
+        <th>mutex_cache_key</th>
+        <th>command output</th>
+        <th>logged_at</th>
+    </tr>
     @foreach ($data as $item)
     <tr>
         <td>{{ $item->id }}</td>
