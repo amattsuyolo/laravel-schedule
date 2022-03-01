@@ -28,29 +28,18 @@ class RecordScheduleFailedStatus
      */
     public function handle(ScheduledTaskFailed $event)
     {
-        // Access the order using $event->order...
-        // $this->task = $task;
-        // $this->runtime = $runtime;
-        logger("我是RecordScheduleFailedStatus listener command:");
-        logger($event->task->command);
-        logger("我是RecordScheduleFailedStatus listener expression:");
-        logger($event->task->expression);
-        logger("我是RecordScheduleFailedStatus listener exception:");
-        logger($event->exception);
-        logger("我是RecordScheduleFailedStatus listener notTrack:");
-        logger($event->task->notTrack);
-        logger("我是RecordScheduleFailedStatus listener upperLimitsOfNormalMinutes:");
-        logger($event->task->upperLimitsOfNormalMinutes);
         //Schedule 下 Withoutoverlapping 如果有排程死掉，
         //但是排程手動下能正常執行時，
         //到資料表scheduled_events找出key然後可以利用 php artisan tinker 直接下Cache::forget($mutex_cache_key);
         // $mutex_cache_key = 'framework' . DIRECTORY_SEPARATOR . 'schedule-' . sha1($event->expression . $event->command);
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
+        $curTime = new \DateTime();
+        $created_at = $curTime->format("Y-m-d H:i:s");
         $scheduledAssistant = ScheduledAssistant::create([
             'type' => 'failed',
             'command' => $command,
-            'logged_at' => date("Y-m-d H:i:s"),
-            'output' => $event->task->output
+            'logged_at' => $created_at,
+            'output' =>  file_get_contents($event->task->output)
         ]);
     }
 }
