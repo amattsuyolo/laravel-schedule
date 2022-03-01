@@ -17,25 +17,29 @@
         <table class="table table-striped">
             <thead>
                 <tr>
-                    <th scope="col">id</th>
-                    <th scope="col">uuid</th>
-                    <th scope="col">type</th>
+                    <!-- <th scope="col">id</th> -->
+                    <!-- <th scope="col">type</th> -->
                     <th scope="col">command</th>
+                    <!-- <th scope="col">command output</th> -->
+                    <th scope="col">next_run_at</th>
+                    <th scope="col">last_starting_logged_at</th>
+                    <th scope="col">state</th>
+                    <th scope="col">msg</th>
                     <th scope="col">mutex_cache_key</th>
-                    <th scope="col">command output</th>
-                    <th scope="col">logged_at</th>
                 </tr>
             </thead>
             @foreach ($data as $item)
             <tbody>
                 <tr>
-                    <td>{{ $item->id }}</td>
-                    <td>{{ $item->uuid }}</td>
-                    <td>{{ $item->type }}</td>
+                    <!-- <td>{{ $item->id }}</td> -->
+                    <!-- <td>{{ $item->type }}</td> -->
                     <td><a href="/schedule-assistant-dashboard/{{$item->command}}">{{ $item->command }}</a></td>
-                    <td>{{ $item->mutex_cache_key }}</td>
-                    <td>{{ $item->output }}</td>
+                    <!-- <td>{{ $item->output }}</td> -->
+                    <td>{{ $item->nextRunAt }}</td>
                     <td>{{ $item->logged_at }}</td>
+                    <td>{{ $item->state ?? ""}}</td>
+                    <td>{{ $item->msg ?? ""}}</td>
+                    <td>{{ $item->mutex_cache_key }}</td>
                 <tr>
                     @endforeach
             <tbody>
