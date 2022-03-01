@@ -57,6 +57,11 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
 
             return $this;
         });
+        ScheduleEvent::macro('setUUID', function ($uuid) {
+            $this->uuid = $uuid;
+
+            return $this;
+        });
         Event::listen(
             ScheduledTaskStarting::class,
             [RecordScheduleStartingStatus::class, 'handle']
