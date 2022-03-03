@@ -30,6 +30,7 @@ class RecordScheduleStartingStatus
      */
     public function handle(ScheduledTaskStarting $event)
     {
+
         //Schedule 下 Withoutoverlapping 如果有排程死掉，
         //但是排程手動下能正常執行時，
         //到資料表scheduled_events找出key然後可以利用 php artisan tinker 直接下Cache::forget($mutex_cache_key);
@@ -37,7 +38,14 @@ class RecordScheduleStartingStatus
         $notTrack = $event->task->notTrack ?? 0;
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
         $mutexName = $event->task->mutexName();
+        $fileName = substr($command, strpos($command, ':') + 1);
 
+        //拿冒號後的
+        if (!file_exists(storage_path('logs/' . $fileName . '.log'))) {
+            fopen(storage_path('logs/' . $fileName . '.log'), "w");
+        }
+        $path = storage_path('logs/' . $fileName . '.log');
+        $event->task->sendOutputTo($path);
         $cron = CronExpression::factory($event->task->expression);
         $date = Carbon::now();
         if ($event->task->timezone) {
