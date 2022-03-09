@@ -35,11 +35,11 @@
                     <!-- <td>{{ $item->type }}</td> -->
                     <td><a href="/schedule-assistant-dashboard/{{$item->command}}">{{ $item->command }}</a></td>
                     <!-- <td>{{ $item->output }}</td> -->
-                    <td>{{ $item->nextRunAt }}</td>
-                    <td>{{ $item->logged_at }}</td>
+                    <td>{{ $item->nextRunAt ?? ""}}</td>
+                    <td>{{ $item->logged_at ?? ""}}</td>
                     <td>{{ $item->state ?? ""}}</td>
                     <td>{{ $item->msg ?? ""}}</td>
-                    <td>{{ $item->mutex_cache_key }}</td>
+                    <td>{{ $item->mutex_cache_key ?? ""}}</td>
                 <tr>
                     @endforeach
             <tbody>

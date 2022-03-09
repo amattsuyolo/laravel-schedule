@@ -7,6 +7,7 @@ use Illuminate\Console\Events\ScheduledTaskFinished;
 use Illuminate\Console\Events\ScheduledTaskSkipped;
 use Illuminate\Console\Events\ScheduledTaskStarting;
 use MattSu\ScheduleAssistant\models\ScheduledAssistant;
+use MattSu\ScheduleAssistant\models\ScheduledAssistantTask;
 
 class RecordScheduleFinishedStatus
 {
@@ -33,16 +34,22 @@ class RecordScheduleFinishedStatus
         //到資料表scheduled_events找出key然後可以利用 php artisan tinker 直接下Cache::forget($mutex_cache_key);
         // $mutex_cache_key = 'framework' . DIRECTORY_SEPARATOR . 'schedule-' . sha1($event->expression . $event->command);
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
-
+        $command = trim($command);
         $output = file_get_contents($event->task->output);
         $curTime = new \DateTime();
         $created_at = $curTime->format("Y-m-d H:i:s");
+        $scheduledAssistantTask = ScheduledAssistantTask::where("command", $command)
+            ->orderBy('created_at', 'id')
+            ->first();
+        $scheduled_assistant_task_id = empty($scheduledAssistantTask) ? 0 : $scheduledAssistantTask->id;
+
         $scheduledAssistant = ScheduledAssistant::create([
             'type' => 'finish',
             'command' => $command,
             'logged_at' => $created_at,
             'output' => $output,
-            'uuid' => $event->task->uuid
+            'uuid' => $event->task->uuid,
+            'scheduled_assistant_task_id' =>  $scheduled_assistant_task_id
         ]);
     }
 }

@@ -14,6 +14,9 @@ use MattSu\ScheduleAssistant\Listeners\RecordScheduleStartingStatus;
 use MattSu\ScheduleAssistant\Listeners\RecordScheduleFailedStatus;
 use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 use MattSu\ScheduleAssistant\Commands\ClearScheduleMutex;
+use MattSu\ScheduleAssistant\Commands\ScheduleSupervisor;
+use MattSu\ScheduleAssistant\Commands\SyncCommand;
+use MattSu\ScheduleAssistant\models\ScheduledAssistantTask;
 
 class ScheduleAssistantServiceProviser extends ServiceProvider
 {
@@ -76,10 +79,19 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
         );
 
         $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
+        $this->app->bind(ScheduledAssistantTask::class, MattSu\ScheduleAssistant\models\ScheduledAssistantTask::class);
 
-        if ($this->app->runningInConsole() and config('schedule-assistant.open-clear-schedule-mutex-command')) {
+        if ($this->app->runningInConsole()) {
+            if (config('schedule-assistant.open-clear-schedule-mutex-command')) {
+                $this->commands([
+                    ClearScheduleMutex::class,
+                ]);
+            }
             $this->commands([
-                ClearScheduleMutex::class,
+                ScheduleSupervisor::class,
+            ]);
+            $this->commands([
+                SyncCommand::class,
             ]);
         }
         app()->make(\Illuminate\Contracts\Console\Kernel::class);

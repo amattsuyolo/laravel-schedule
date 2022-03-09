@@ -4,9 +4,9 @@ namespace MattSu\ScheduleAssistant\models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use MattSu\ScheduleAssistant\models\ScheduledAssistantTask;
+use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 
-class ScheduledAssistant extends Model
+class ScheduledAssistantTask extends Model
 {
     use HasFactory;
     /**
@@ -14,7 +14,7 @@ class ScheduledAssistant extends Model
      *
      * @var string
      */
-    protected $table = 'scheduled_assistant_log';
+    protected $table = 'scheduled_assistant_task';
     /**
      * Indicates if the model should be timestamped.
      *
@@ -28,10 +28,10 @@ class ScheduledAssistant extends Model
      */
     protected $guarded = [];
     /**
-     * Get the post that owns the comment.
+     * Get the comments for the blog post.
      */
-    public function task()
+    public function logs()
     {
-        return $this->belongsTo(ScheduledAssistantTask::class);
+        return $this->hasMany(ScheduledAssistant::class);
     }
 }

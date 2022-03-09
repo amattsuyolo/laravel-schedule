@@ -1,31 +1,67 @@
 <?php
 
-namespace MattSu\ScheduleAssistant\Controllers;
+namespace MattSu\ScheduleAssistant\Commands;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Console\Command;
+use \Cron\CronExpression;
+use \Carbon\Carbon;
+use Cache;
 use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 use MattSu\ScheduleAssistant\models\ScheduledAssistantTask;
+use MattSu\ScheduleAssistant\Events\ScheduleErrorEvent;
 
-class ScheduleAssistantController extends Controller
+class ScheduleSupervisor extends Command
 {
     /**
-     * 應該不能所有人都可以看
-     * 用laravel 的auth?
-     * 把判斷有問題的區塊 抽成一個Service
-     * 之後應該要變成存API
+     * The name and signature of the console command.
+     *
+     * @var string
      */
-    public function dashBoardIndex()
+    protected $signature = 'command:scheduleSupervisor';
+
+    /**
+     * The console command description.
+     *
+     * @var string
+     */
+    protected $description = 'ScheduleSupervisor';
+
+    /**
+     * Create a new command instance.
+     *
+     * @return void
+     */
+    public function __construct()
     {
-        //取得所有unique command 理論所有就是允許被記錄的
-        //沒有開始怎麼辦? (根本不太可能)
-        //每分鐘的排程也會陣亡
-        //認真要解決的話 每分鐘的排程要獨立於排程器(google?)
-        //可以做一個小工具的包 專門讀SQL 排程Table
-        //應該要全部的資料都可以判斷?
-        //但dashBoard 應該是最新的
-
-
+        parent::__construct();
+    }
+    // $this->date_time = $date_time;
+    // $this->task_id = $task_id;
+    // $this->task_command = $task_command;
+    // $this->msg = $msg;
+    // $this->state = $state;
+    /**
+     * Execute the console command.
+     * 每分鐘執行
+     * config 可以關掉要不要執行
+     * 進階可以指定要監控的時間區間
+     * 用config
+     * //抓取dinstinct 的排程名稱 name 相同的
+     *  理論上不同參數就是不同的東西
+     *  可以指定要監控哪個排程
+     *
+     *  利用Service 判斷有沒有問題
+     *  graceTime
+      
+     *  dispatch event 
+     *  寫一個基本的通知listener
+     *  config 可以設定 listener Name
+     *  可以用mailtrap 做測試
+     *  要一個錯誤blade
+     * @return int
+     */
+    public function handle()
+    {
         $ScheduledAssistantTasks = ScheduledAssistantTask::where('notTrack', 0)
             ->orderBy("id", "desc")
             ->get();
@@ -42,6 +78,7 @@ class ScheduleAssistantController extends Controller
                 //nextRunAt 如何更新?(listener 的 start處理)
                 $item->state = "error";
                 $item->msg = "notBegin";
+                ScheduleErrorEvent::dispatch(date('Y-m-d H:i:s'), $item->id, $item->command, "notBegin", "error");
                 continue;
             }
             // 沒有開始記錄 現在時間  > 如果紀錄start的next_run_at 	inactivated
@@ -72,23 +109,12 @@ class ScheduleAssistantController extends Controller
                 if (now() > $dateTime) {
                     $item->state = "error";
                     $item->msg = "run too long";
+                    ScheduleErrorEvent::dispatch(date('Y-m-d H:i:s'), $item->id, $item->command, "run too long", "error");
                 } else {
                     $item->state = "normal";
                     $item->msg = "in runing";
                 }
             }
         }
-
-        return view('mattsu::scheduleDashboardIndex', ['data' => $ScheduledAssistantTasks]);
-    }
-    /**
-     * 詳細歷史資訊
-     */
-    public function dashBoardDetail($command)
-    {
-        $ScheduledAssistant = ScheduledAssistant::where('command', $command)
-            ->orderBy("id", "desc")
-            ->get();
-        return view('mattsu::scheduleDashboard', ['data' => $ScheduledAssistant]);
     }
 }
