@@ -94,14 +94,5 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
                 SyncCommand::class,
             ]);
         }
-        app()->make(\Illuminate\Contracts\Console\Kernel::class);
-
-        $schedule = app()->make(\Illuminate\Console\Scheduling\Schedule::class);
-
-        $events = collect($schedule->events())->map(function ($event) {
-            $filename = $event->command . date('Y-m-d H:i:s') . uniqid() . '.log';
-            $path = storage_path('logs/' . $filename);
-            $event->appendOutputTo($path);
-        });
     }
 }
