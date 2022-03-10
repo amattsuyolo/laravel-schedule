@@ -39,7 +39,7 @@ class RecordScheduleFinishedStatus
         $curTime = new \DateTime();
         $created_at = $curTime->format("Y-m-d H:i:s");
         $scheduledAssistantTask = ScheduledAssistantTask::where("command", $command)
-            ->orderBy('created_at', 'id')
+            ->orderBy('id', "desc")
             ->first();
         $scheduled_assistant_task_id = empty($scheduledAssistantTask) ? 0 : $scheduledAssistantTask->id;
 
