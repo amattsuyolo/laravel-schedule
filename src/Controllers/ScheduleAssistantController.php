@@ -45,7 +45,7 @@ class ScheduleAssistantController extends Controller
                 continue;
             }
             // 沒有開始記錄 現在時間  > 如果紀錄start的next_run_at 	inactivated
-            if (empty($scheduledAssistantStart)  and  (date('Y-m-d H:i:s') > $item->nextRunAt)) {
+            if (empty($scheduledAssistantStart)  and  (date('Y-m-d H:i:s') < $item->nextRunAt)) {
                 $item->state = "normal";
                 $item->msg = "inactivated";
                 continue;
