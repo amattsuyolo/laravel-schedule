@@ -17,50 +17,50 @@ class ScheduleAssistantController extends Controller
      */
     public function dashBoardIndex()
     {
-        //取得所有unique command 理論所有就是允許被記錄的
-        //沒有開始怎麼辦? (根本不太可能)
-        //每分鐘的排程也會陣亡
-        //認真要解決的話 每分鐘的排程要獨立於排程器(google?)
-        //可以做一個小工具的包 專門讀SQL 排程Table
-        //應該要全部的資料都可以判斷?
-        //但dashBoard 應該是最新的
-
 
         $ScheduledAssistantTasks = ScheduledAssistantTask::where('notTrack', 0)
             ->orderBy("id", "desc")
             ->get();
         foreach ($ScheduledAssistantTasks as $item) {
+            $item->last_start_at = "";
+            $item->last_finish_at = "";
+            $item->last_fail_at = "";
             //取出最新的start
             $scheduledAssistantStart = ScheduledAssistant::where('type', 'starting')
                 ->where('scheduled_assistant_task_id', $item->id)
                 ->orderBy("id", "desc")
                 ->first();
-            $item->state = "default";
-            $item->msg = "";
+            $item->state = ScheduledAssistantTask::STATE["default"];
             //沒有開始記錄 現在時間大於該開始時間
             if (empty($scheduledAssistantStart) and  (date('Y-m-d H:i:s') > $item->nextRunAt)) {
                 //nextRunAt 如何更新?(listener 的 start處理)
-                $item->state = "error";
-                $item->msg = "notBegin";
+                $item->state = ScheduledAssistantTask::STATE["not_begin"];
                 continue;
             }
             // 沒有開始記錄 現在時間  > 如果紀錄start的next_run_at 	inactivated
             if (empty($scheduledAssistantStart)  and  (date('Y-m-d H:i:s') < $item->nextRunAt)) {
-                $item->state = "normal";
-                $item->msg = "inactivated";
+                $item->state = ScheduledAssistantTask::STATE["inactivated"];
                 continue;
             }
 
             //取出結束的紀錄 (用uuid關聯)
-            $ScheduledAssistant = ScheduledAssistant::where('type', 'finish')
+            $scheduledAssistantFinish = ScheduledAssistant::where('type', 'finish')
                 ->where('uuid', $scheduledAssistantStart->uuid)
                 ->first();
-            $finish_logged_at = $ScheduledAssistant->logged_at ?? "";
-            if (!empty($ScheduledAssistant)) {
+            //取出失敗的紀錄 (用uuid關聯)
+            $scheduledAssistantFail = ScheduledAssistant::where('type', 'failed')
+                ->where('uuid', $scheduledAssistantStart->uuid)
+                ->first();
+            if (!empty($scheduledAssistantFinish)) {
                 //有開始有結束
-                $item->state = "success";
-                $item->msg = "normal";
+                $item->last_start_at = $scheduledAssistantStart->logged_at;
+                $item->last_finish_at = $scheduledAssistantFinish->logged_at;
+                $item->state = ScheduledAssistantTask::STATE["has_begin_and_finish"];
                 continue;
+            } else if (!empty($scheduledAssistantFail)) {
+                $item->last_start_at = $scheduledAssistantStart->logged_at;
+                $item->last_fail_at = $scheduledAssistantFail->logged_at;
+                $item->state = ScheduledAssistantTask::STATE["has_failed"];
             } else {
                 //最新log 開始記錄時間
                 $dateTime = new \DateTime($scheduledAssistantStart->logged_at);
@@ -70,11 +70,11 @@ class ScheduleAssistantController extends Controller
                 }
                 $dateTime->modify("+" . $upperLimitsOfNormalMinutes . " minutes");
                 if (now() > $dateTime) {
-                    $item->state = "error";
-                    $item->msg = "run too long";
+                    $item->last_start_at = $scheduledAssistantStart->logged_at;
+                    $item->state = ScheduledAssistantTask::STATE["run_too_long"];
                 } else {
-                    $item->state = "normal";
-                    $item->msg = "in runing";
+                    $item->last_start_at = $scheduledAssistantStart->logged_at;
+                    $item->state = ScheduledAssistantTask::STATE["in_running"];
                 }
             }
         }
