@@ -36,6 +36,10 @@ class RecordScheduleFinishedStatus
         $command = substr($event->task->command, strpos($event->task->command, 'artisan') + strlen('artisan') + 1);
         $command = trim($command);
         $output = file_get_contents($event->task->output);
+        $pattern = "/ErrorException/";
+        if (preg_match($pattern, $output)) {
+            throw new \Exception("detect errorException");
+        }
         $curTime = new \DateTime();
         $created_at = $curTime->format("Y-m-d H:i:s");
         $scheduledAssistantTask = ScheduledAssistantTask::where("command", $command)
