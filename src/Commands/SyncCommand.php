@@ -9,6 +9,7 @@ use MattSu\ScheduleAssistant\Service\ScheduleAssistantService;
 use \Cron\CronExpression;
 use \Carbon\Carbon;
 use Cache;
+use DB;
 
 class SyncCommand extends Command
 {
@@ -17,7 +18,7 @@ class SyncCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'command:syncScheduleCommand';
+    protected $signature = 'scheduleCommand:sync';
 
     /**
      * The console command description.
@@ -42,17 +43,18 @@ class SyncCommand extends Command
      */
     public function handle(ScheduleAssistantService $scheduleAssistantService)
     {
-        //取出所有command
+        //取出所有kernel中的command
         $allCommandInSchedule = $scheduleAssistantService->getAllCommandInSchedule();
-        // var_dump($allCommandInSchedule);
-        $allCommandInSchedule->each(function ($item, $key) {
+        //取出所有在table中的command
+        $scheduledAssistantTasks = ScheduledAssistantTask::all();
+        $temp_array = [];
+        $allCommandInSchedule->each(function ($item, $key) use (&$scheduledAssistantTasks, &$temp_array) {
             $item = (object)$item;
             $command = trim($item->command);
+            array_push($temp_array, $command);
             //撈出資料
             if (!$item->notTrack) {
-                $ScheduledAssistantTask = ScheduledAssistantTask::where("command", $command)
-                    ->orderBy("id", "desc")
-                    ->first();
+                $ScheduledAssistantTask = $scheduledAssistantTasks->where("command", $command)->all();
                 //沒有的新增
                 if (empty($ScheduledAssistantTask)) {
                     $ScheduledAssistantTask = new ScheduledAssistantTask;
@@ -64,14 +66,16 @@ class SyncCommand extends Command
                     $ScheduledAssistantTask->save();
                 }
             } else {
-                $ScheduledAssistantTask = ScheduledAssistantTask::where("command", $command)
-                    ->orderBy("id", "desc")
-                    ->first();
+                $ScheduledAssistantTask = $scheduledAssistantTasks->where("command", $command)->first();
                 if ($ScheduledAssistantTask->notTrack == 0) {
                     $ScheduledAssistantTask->notTrack = 1;
                     $ScheduledAssistantTask->save();
                 }
             }
         });
+        //BINARY 可以把大小寫當作不同
+        //把SCHEDULE KERNEL 裡面不存在的資料全部更新成notTrack 為 true
+        ScheduledAssistantTask::whereNotIn(DB::raw('BINARY `command`'), $temp_array)
+            ->update(['notTrack' => 1]);
     }
 }
