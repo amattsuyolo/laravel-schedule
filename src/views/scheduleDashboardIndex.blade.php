@@ -1,3 +1,4 @@
+@inject('scheduledAssistantTask', '\MattSu\ScheduleAssistant\models\ScheduledAssistantTask')
 <!doctype html>
 <html lang="en">
 
@@ -22,9 +23,9 @@
                     <th scope="col">command</th>
                     <!-- <th scope="col">command output</th> -->
                     <th scope="col">next_run_at</th>
-                    <th scope="col">last_starting_logged_at</th>
+                    <th scope="col">last_start</th>
+                    <th scope="col">last_finish</th>
                     <th scope="col">state</th>
-                    <th scope="col">msg</th>
                     <th scope="col">mutex_cache_key</th>
                 </tr>
             </thead>
@@ -36,17 +37,27 @@
                     <td><a href="/schedule-assistant-dashboard/{{$item->command}}">{{ $item->command }}</a></td>
                     <!-- <td>{{ $item->output }}</td> -->
                     <td>{{ $item->nextRunAt ?? ""}}</td>
-                    <td>{{ $item->logged_at ?? ""}}</td>
-                    <td>{{ $item->state ?? ""}}</td>
-                    <td>{{ $item->msg ?? ""}}</td>
+                    <td>{{ $item->last_start_at ?? ""}}</td>
+                    <td>{{ $item->last_finish_at ?? ""}}</td>
+                    @if (in_array($item->state, $scheduledAssistantTask::NORMAL_STATE))
+                    <td>
+                        <button type="button" class="btn btn-success">
+                            {{ str_replace('_', ' ', array_search($item->state, $scheduledAssistantTask::STATE)) }}
+                        </button>
+                    </td>
+                    @else
+                    <td>
+                        <button type="button" class="btn btn-danger">
+                            {{ str_replace('_', ' ', array_search($item->state, $scheduledAssistantTask::STATE)) }}
+                        </button>
+                    </td>
+                    @endif
                     <td>{{ $item->mutex_cache_key ?? ""}}</td>
                 <tr>
                     @endforeach
             <tbody>
         </table>
     </div>
-
-
     <!-- Optional JavaScript; choose one of the two! -->
 
     <!-- Option 1: Bootstrap Bundle with Popper -->
