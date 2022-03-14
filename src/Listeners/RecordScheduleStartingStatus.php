@@ -71,6 +71,7 @@ class RecordScheduleStartingStatus
         } else {
             $scheduledAssistantTask = ScheduledAssistantTask::find($scheduledAssistantTask->id);
             $scheduledAssistantTask->nextRunAt = $nextRunAt;
+            $scheduledAssistantTask->notTrack = $notTrack;
             $scheduledAssistantTask->save();
         }
         //更新nextRunAt
