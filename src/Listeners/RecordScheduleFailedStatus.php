@@ -46,7 +46,8 @@ class RecordScheduleFailedStatus
             'command' => $command,
             'logged_at' => $created_at,
             'output' =>  file_get_contents($event->task->output),
-            'scheduled_assistant_task_id' =>  $scheduled_assistant_task_id
+            'scheduled_assistant_task_id' =>  $scheduled_assistant_task_id,
+            'uuid' => $event->task->uuid,
         ]);
     }
 }
