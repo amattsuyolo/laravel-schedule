@@ -8,6 +8,18 @@ use MattSu\ScheduleAssistant\models\ScheduledAssistant;
 
 class ScheduledAssistantTask extends Model
 {
+    const STATE = [
+        "default" => 0,
+        "inactivated" => 1,
+        "has_begin_and_finish" => 2,
+        "in_running" => 3,
+        "run_too_long" => 4,
+        "has_failed" => 5,
+        "not_begin" => 6
+    ];
+    const NORMAL_STATE = [
+        1, 2, 3
+    ];
     use HasFactory;
     /**
      * The table associated with the model.
