@@ -1,5 +1,5 @@
 # laravel-schedule
-![screenshot](img/dashboard.png)
+![screenshot](img/dashboardIndex.png)
 
 ## Requirements
 
