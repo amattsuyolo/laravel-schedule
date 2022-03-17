@@ -27,12 +27,8 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
      */
     public function register()
     {
-        $source = realpath($raw = __DIR__ . '/../config/schedule-assistant.php') ?: $raw;
-        $this->publishes([
-            $source => config_path('schedule-assistant.php'),
-        ]);
-
-        $this->loadViewsFrom(__DIR__ . '/views', 'mattsu');
+        $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
+        $this->app->bind(ScheduledAssistantTask::class, MattSu\ScheduleAssistant\models\ScheduledAssistantTask::class);
     }
 
     /**
@@ -42,6 +38,12 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
      */
     public function boot()
     {
+        $source = realpath($raw = __DIR__ . '/../config/schedule-assistant.php') ?: $raw;
+        $this->publishes([
+            $source => config_path('schedule-assistant.php'),
+        ]);
+
+        $this->loadViewsFrom(__DIR__ . '/views', 'mattsu');
         $this->loadMigrationsFrom(__DIR__ . '/migrations');
 
         $configPath = __DIR__ . '/../config/schedule-assistant.php';
@@ -77,9 +79,6 @@ class ScheduleAssistantServiceProviser extends ServiceProvider
             ScheduledTaskFailed::class,
             [RecordScheduleFailedStatus::class, 'handle']
         );
-
-        $this->app->bind(ScheduledAssistant::class, MattSu\ScheduleAssistant\models\ScheduledAssistant::class);
-        $this->app->bind(ScheduledAssistantTask::class, MattSu\ScheduleAssistant\models\ScheduledAssistantTask::class);
 
         if ($this->app->runningInConsole()) {
             if (config('schedule-assistant.open-clear-schedule-mutex-command')) {
