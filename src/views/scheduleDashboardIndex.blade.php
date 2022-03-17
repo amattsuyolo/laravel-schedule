@@ -52,7 +52,7 @@
                         </button>
                     </td>
                     @endif
-                    <td>{{ $item->mutex_cache_key ?? ""}}</td>
+                    <td><span style="font-size: 10px;">{{ $item->mutex_cache_key ?? ""}}</span></td>
                 <tr>
                     @endforeach
             <tbody>
