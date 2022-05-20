@@ -57,7 +57,7 @@ class RecordScheduleStartingStatus
         $event->task->setUUID($uuid);
         $curTime = new \DateTime();
         $created_at = $curTime->format("Y-m-d H:i:s");
-        $upperLimitsOfNormalMinutes = $event->task->upperLimitsOfNormalMinutes;
+        $upperLimitsOfNormalMinutes = $event->task->upperLimitsOfNormalMinutes ?? 0;
         $nextRunAt = $cron->getNextRunDate()->format('Y-m-d H:i:s');
         $scheduledAssistantTask = ScheduledAssistantTask::where("command", $command)->first();
         if (empty($scheduledAssistantTask)) {

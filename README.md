@@ -3,7 +3,7 @@
 
 ## Requirements
 
-- PHP ^7.1
+- LARAVEL ^8.0
 
 
 ## Installation
